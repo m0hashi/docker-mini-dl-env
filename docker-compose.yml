@@ -1,0 +1,32 @@
+version: '2.4'
+
+services:
+  mini-dl-env:
+    build:
+      context: ./configs
+      dockerfile: Dockerfile
+    image: m0hashi/mini-dl-env
+    runtime: nvidia
+    ipc: host
+    container_name: mini-dl-env
+    # privileged: true
+    environment: 
+    - NVIDIA_VISIBLE_DEVICES=all
+    - NVIDIA_DRIVER_CAPABILITIES=all
+    ports:
+      - "8888:8888" #for jupyter
+      # - "22:22" # for ssh
+      - "6006:6006" # for tensorboard
+      - "5000:5000" # for mlflow
+    volumes:
+      # hostdir:container dir
+      - ~/workspace:/home/mluser/workspace
+      # - /home/${USER}/.ssh:/home/mluser/.ssh
+      # - /home/${USER}/.kaggle:/home/mluser/.kaggle
+    user: "1000:1000" # UID:GID
+    entrypoint:  
+    - /usr/bin/tini
+    - --
+    - /home/mluser/.local/bin/docker-entrypoint.sh
+    
+    
